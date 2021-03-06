@@ -18,11 +18,25 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+<settings
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd"
+  xmlns="http://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-<settings>
+  <servers>
+    <server>
+      <id>y</id>
+      <username>X</username>
+    </server>
+  </servers>
   <profiles>
     <profile>
       <id>it-repo</id>
+      <properties>
+        <bob>dog</bob>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <repositories>
         <repository>
           <id>local.central</id>
@@ -49,7 +63,4 @@ under the License.
       </pluginRepositories>
     </profile>
   </profiles>
-  <activeProfiles>
-    <activeProfile>it-repo</activeProfile>
-  </activeProfiles>
 </settings>
