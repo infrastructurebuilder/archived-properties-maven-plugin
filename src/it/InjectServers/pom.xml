@@ -27,6 +27,11 @@
             </goals>
             <configuration>
               <keyPrefix>server.%s.</keyPrefix>
+              <!--
+              <servers>
+                <server>sharedservices</server>
+              </servers>
+              -->
             </configuration>
           </execution>
         </executions>
