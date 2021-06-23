@@ -1,8 +1,8 @@
 # MojoHaus Properties Maven Plugin
 
-This is the [properties-maven-plugin](http://www.mojohaus.org/properties-maven-plugin/).
- 
-[![Build Status](https://travis-ci.org/mojohaus/properties-maven-plugin.svg?branch=master)](https://travis-ci.org/mojohaus/properties-maven-plugin)
+This was forked from the original properties-maven-plugin to fix issue mojohaus/properties-maven-plugin#30.
+This is no longer the [properties-maven-plugin](http://www.mojohaus.org/properties-maven-plugin/).
+
 
 ## Releasing
 
@@ -15,3 +15,4 @@ For publishing the site do the following:
 cd target/checkout
 mvn verify site site:stage scm-publish:publish-scm
 ```
+
