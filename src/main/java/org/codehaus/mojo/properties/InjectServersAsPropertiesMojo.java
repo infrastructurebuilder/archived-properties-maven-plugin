@@ -67,7 +67,7 @@ public class InjectServersAsPropertiesMojo
     private List<String> servers = null;
 
     /**
-     * @param files The files to set for tests.
+     * @param servers The servers to set for tests.
      */
     public void setServers( List<String> servers)
     {
