@@ -64,16 +64,17 @@ public class InjectServersAsPropertiesMojo
      * The Server ids that will be used when injecting properties.
      */
     @Parameter
-    private List<String> servers = new ArrayList<>();
+    private List<String> servers = null;
 
     /**
      * @param files The files to set for tests.
      */
     public void setServers( List<String> servers)
     {
-        if ( servers == null )
+
+        if ( servers == null && servers.size() == 0)
         {
-            this.servers= new ArrayList<>();
+            this.servers = null;
         }
         else
         {
@@ -128,8 +129,15 @@ public class InjectServersAsPropertiesMojo
     private void loadServers()
         throws MojoExecutionException
     {
-      for (int i = 0; i < servers.size(); ++i) {
-        load( servers.get(i));
+      List<String> s = servers;
+      if (servers == null) {
+        getLog().info("Using all servers");
+        s = new ArrayList<>();
+        for (Server ss: settings.getServers())
+          s.add(ss.getId());
+      }
+      for (int i = 0; i < s.size(); ++i) {
+        load( s.get(i));
       }
     }
     private void loadFiles()
@@ -183,20 +191,26 @@ public class InjectServersAsPropertiesMojo
             getLog().debug( "Loading properties from " + id );
 
             Properties properties = new Properties();
-            properties.setProperty(key(id,"directoryPermissions"), resource.getDirectoryPermissions());
-            properties.setProperty(key(id,"filePermissions"), resource.getFilePermissions());
-            properties.setProperty(key(id,"id"), resource.getId());
-            properties.setProperty(key(id,"passphrase"), resource.getPassphrase());
-            properties.setProperty(key(id,"password"), resource.getPassword());
-            properties.setProperty(key(id,"privateKey"), resource.getPrivateKey());
-            properties.setProperty(key(id,"username"), resource.getUsername());
-//            properties.setProperty(key("configuration"), resource.getConfiguration());
+            setProperty(properties,key(id,"directoryPermissions"), resource.getDirectoryPermissions());
+            setProperty(properties,key(id,"filePermissions"), resource.getFilePermissions());
+            setProperty(properties,key(id,"id"), resource.getId());
+            setProperty(properties,key(id,"passphrase"), resource.getPassphrase());
+            setProperty(properties,key(id,"password"), resource.getPassword());
+            setProperty(properties,key(id,"privateKey"), resource.getPrivateKey());
+            setProperty(properties,key(id,"username"), resource.getUsername());
+//            setProperty(properties,key("configuration"), resource.getConfiguration());
 
             Properties projectProperties = project.getProperties();
             for(String key: properties.stringPropertyNames())
             {
                 projectProperties.put(key, properties.get(key));
             }
+
+    }
+
+    private void setProperty(Properties p, String key, String val) {
+      if (val != null)
+        p.setProperty(key, val);
 
     }
 
