@@ -29,14 +29,17 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.codehaus.mojo</groupId>
+  <groupId>org.infrastructurebuilder.maven</groupId>
   <artifactId>properties-maven-plugin</artifactId>
   <version>1.0.1-SNAPSHOT</version>
 
-  <name>Properties Maven Plugin</name>
-  <description> 
+  <name>Infrastructurebuilder Properties Maven Plugin</name>
+  <description>
     The Properties Maven Plugin is here to make life a little easier when dealing
     with properties. It provides goals to read and write properties from files.
+
+    This was forked from the original properties-maven-plugin to fix issue mojohaus/properties-maven-plugin#30.
+
   </description>
 
   <inceptionYear>2009</inceptionYear>
@@ -56,23 +59,39 @@
   <properties>
     <mavenVersion>3.2.5</mavenVersion>
     <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
+    <gpg.signing.profiles>release,IBgpgsigning</gpg.signing.profiles>
+    <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
+    <maven.release.plugin.version>3.0.0-M4</maven.release.plugin.version>
+    <maven.nexus.staging.plugin.version>1.6.8</maven.nexus.staging.plugin.version>
+    <maven.release.plugin.version>3.0.0-M4</maven.release.plugin.version>
+    <maven.nexus.staging.plugin.skipStaging>false</maven.nexus.staging.plugin.skipStaging>
   </properties>
 
 
   <scm>
-    <connection>scm:git:https://github.com/mojohaus/properties-maven-plugin.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/mojohaus/properties-maven-plugin.git</developerConnection>
-    <url>https://github.com/mojohaus/properties-maven-plugin</url>
+    <connection>scm:git:https://github.com/infrastructurebuilder/properties-maven-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/infrastructurebuilder/properties-maven-plugin.git</developerConnection>
+    <url>https://github.com/infrastructurebuilder/properties-maven-plugin</url>
     <tag>HEAD</tag>
   </scm>
   <issueManagement>
     <system>GitHub</system>
-    <url>https://github.com/mojohaus/properties-maven-plugin/issues/</url>
+    <url>https://github.com/infrastructurebuilder/properties-maven-plugin/issues/</url>
   </issueManagement>
   <ciManagement>
     <system>Travis-CI</system>
-    <url>https://travis-ci.org/mojohaus/properties-maven-plugin</url>
+    <url>https://travis-ci.org/infrastructurebuilder/properties-maven-plugin</url>
   </ciManagement>
+  <distributionManagement>
+    <repository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <developers>
     <developer>
@@ -138,6 +157,35 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>${maven.gpg.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>${maven.nexus.staging.plugin.version}</version>
+          <configuration>
+            <skipStaging>${maven.nexus.staging.plugin.skipStaging}</skipStaging>
+            <serverId>ossrh</serverId>
+            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${maven.release.plugin.version}</version>
+          <configuration>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <useReleaseProfile>true</useReleaseProfile>
+            <releaseProfiles>${gpg.signing.profiles}</releaseProfiles>
+            <goals>deploy</goals>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -164,4 +212,40 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+      <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>tidy-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
