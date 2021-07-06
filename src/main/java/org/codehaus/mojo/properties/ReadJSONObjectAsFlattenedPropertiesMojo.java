@@ -28,7 +28,7 @@ import com.github.wnameless.json.flattener.JsonFlattener;
 /**
  * Copied from the read-project-properties goal
  */
-@Mojo(name = "read-tfsate-as-properties", defaultPhase = LifecyclePhase.NONE, requiresProject = true, threadSafe = true)
+@Mojo(name = "read-json-as-properties", defaultPhase = LifecyclePhase.NONE, requiresProject = true, threadSafe = true)
 public class ReadJSONObjectAsFlattenedPropertiesMojo extends AbstractMojo {
   @Parameter(defaultValue = "${project}", readonly = true, required = true)
   private MavenProject            project;
@@ -285,7 +285,6 @@ public class ReadJSONObjectAsFlattenedPropertiesMojo extends AbstractMojo {
       }
       String tt = JsonFlattener.flatten(stream.toString());
 
-      System.out.println(tt);
       JSONObject jj = new JSONObject(tt);
 
       SortedSet<String> s = new TreeSet<>(jj.keySet());
