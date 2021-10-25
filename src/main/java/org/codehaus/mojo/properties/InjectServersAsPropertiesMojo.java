@@ -1,5 +1,7 @@
 package org.codehaus.mojo.properties;
 
+import static java.util.stream.Collectors.joining;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -26,10 +28,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringJoiner;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -203,7 +209,20 @@ public class InjectServersAsPropertiesMojo
               setProperty(properties,key(id,"id"), resource.getId());
               setProperty(properties,key(id,"passphrase"), resource.getPassphrase());
               setProperty(properties,key(id,"password"), resource.getPassword());
-              setProperty(properties,key(id,"privateKey"), resource.getPrivateKey());
+              String pk = resource.getPrivateKey();
+              setProperty(properties,key(id,"privateKey"), pk);
+              Path pkPath = Paths.get(pk);
+              if (pk != null && Files.isRegularFile(pkPath)) {
+                try {
+                      List<String> pkLines = Files.readAllLines(pkPath) ;
+                      setProperty(properties,key(id,"privateKeyJoined"), pkLines.stream().collect(joining("\\n")));
+                      setProperty(properties,key(id,"privateKeyJoinedNL"), pkLines.stream().collect(joining("\n")));
+                } catch (IOException e) {
+                  // do nothing
+                }
+
+              }
+
               setProperty(properties,key(id,"username"), resource.getUsername());
   //            setProperty(properties,key("configuration"), resource.getConfiguration());
             } catch (SecDispatcherException e) {
