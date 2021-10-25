@@ -31,7 +31,7 @@
 
   <groupId>org.infrastructurebuilder.maven</groupId>
   <artifactId>properties-maven-plugin</artifactId>
-  <version>1.0.7-ib-SNAPSHOT</version>
+  <version>1.0.7-ib-2-SNAPSHOT</version>
 
   <name>Infrastructurebuilder Properties Maven Plugin</name>
   <description>
