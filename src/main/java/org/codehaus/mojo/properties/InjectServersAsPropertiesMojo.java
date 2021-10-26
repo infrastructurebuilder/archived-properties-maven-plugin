@@ -211,16 +211,21 @@ public class InjectServersAsPropertiesMojo
               setProperty(properties,key(id,"password"), resource.getPassword());
               String pk = resource.getPrivateKey();
               setProperty(properties,key(id,"privateKey"), pk);
-              Path pkPath = Paths.get(pk);
-              if (pk != null && Files.isRegularFile(pkPath)) {
-                try {
-                      List<String> pkLines = Files.readAllLines(pkPath) ;
-                      setProperty(properties,key(id,"privateKeyJoined"), pkLines.stream().collect(joining("\\n")));
-                      setProperty(properties,key(id,"privateKeyJoinedNL"), pkLines.stream().collect(joining("\n")));
-                } catch (IOException e) {
-                  // do nothing
-                }
+              if (pk != null) {
+                Path pkPath = Paths.get(pk);
+                if (Files.isRegularFile(pkPath)) {
+                  try {
+                        List<String> pkLines = Files.readAllLines(pkPath) ;
+                        setProperty(properties,key(id,"privateKeyJoined"), pkLines.stream().collect(joining("\\n")));
+                        setProperty(properties,key(id,"privateKeyJoinedNL"), pkLines.stream().collect(joining("\n")));
+                  } catch (IOException e) {
+                    if (quiet)
+                      getLog().info("Quietly ignoring read error of " + pk);
+                     else
+                       throw new MojoExecutionException("Error reading " + pk, e);
+                  }
 
+                }
               }
 
               setProperty(properties,key(id,"username"), resource.getUsername());
