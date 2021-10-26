@@ -1,7 +1,6 @@
 package org.codehaus.mojo.properties;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.settings.Server;

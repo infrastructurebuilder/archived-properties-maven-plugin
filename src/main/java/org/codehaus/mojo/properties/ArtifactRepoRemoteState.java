@@ -2,10 +2,8 @@ package org.codehaus.mojo.properties;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Authenticator;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
@@ -15,7 +13,6 @@ import java.net.URLConnection;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
-import org.json.JSONObject;
 
 /**
  * An ArtifactRepoRemoteState maps to an
@@ -53,8 +50,6 @@ public class ArtifactRepoRemoteState {
   /**
    *
    * @return contents as a valid JSON String
-   * @throws MojoExecutionException
-   * @throws MalformedURLException
    */
   public String readContents() throws IOException {
     requireNonNull(serverId, "serverId is required");
