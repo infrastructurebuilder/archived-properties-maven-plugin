@@ -56,7 +56,6 @@ public class S3RemoteState {
 
   /**
    *
-   * @param settings (Maven settings)
    * @return string of JSONObject f
    * @throws IOException
    */
