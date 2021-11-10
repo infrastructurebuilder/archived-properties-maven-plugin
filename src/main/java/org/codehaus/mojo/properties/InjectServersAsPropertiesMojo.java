@@ -68,6 +68,8 @@ public class InjectServersAsPropertiesMojo
   private MavenProject project;
   @Parameter( defaultValue = "${settings}", readonly = true, required = true )
   private Settings settings;
+  @Parameter( defaultValue = "false")
+  private boolean skip;
 
   @Component
   private SecDispatcher secDispatcher;
@@ -124,6 +126,10 @@ public class InjectServersAsPropertiesMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+      if (skip) {
+        getLog().info("Skipping...");
+        return;
+      }
         checkParameters();
 
         loadServers(); //loadFiles();
