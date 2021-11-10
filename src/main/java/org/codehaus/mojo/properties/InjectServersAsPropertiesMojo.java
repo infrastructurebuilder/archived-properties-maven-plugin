@@ -68,7 +68,7 @@ public class InjectServersAsPropertiesMojo
   private MavenProject project;
   @Parameter( defaultValue = "${settings}", readonly = true, required = true )
   private Settings settings;
-  @Parameter( defaultValue = "false")
+  @Parameter( defaultValue = "false", property = "properties.skip")
   private boolean skip;
 
   @Component
