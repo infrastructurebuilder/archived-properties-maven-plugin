@@ -70,6 +70,8 @@ public class InjectServersAsPropertiesMojo
   private Settings settings;
   @Parameter( defaultValue = "false", property = "properties.skip")
   private boolean skip;
+  @Parameter( defaultValue = "false", property = "properties.servers.skip")
+  private boolean skipServers;
 
   @Component
   private SecDispatcher secDispatcher;
@@ -126,7 +128,7 @@ public class InjectServersAsPropertiesMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-      if (skip) {
+      if (skip || skipServers) {
         getLog().info("Skipping...");
         return;
       }

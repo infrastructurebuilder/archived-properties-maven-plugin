@@ -42,6 +42,11 @@ public class ReadTOMLObjectAsFlattenedPropertiesMojo extends AbstractMojo {
   @Parameter
   private boolean      reformatAWSCreds = false;
 
+  @Parameter( defaultValue = "false", property = "properties.skip")
+  private boolean skip;
+  @Parameter( defaultValue = "false", property = "properties.toml.skip")
+  private boolean skipTOML;
+
   public void setReformatAWSCreds(boolean reformatAWSCreds) {
     this.reformatAWSCreds = reformatAWSCreds;
   }
@@ -86,6 +91,10 @@ public class ReadTOMLObjectAsFlattenedPropertiesMojo extends AbstractMojo {
 
   /** {@inheritDoc} */
   public void execute() throws MojoExecutionException, MojoFailureException {
+    if (skip || skipTOML) {
+      getLog().info("Skipping...");
+      return;
+    }
     checkParameters();
 
     loadFiles();
