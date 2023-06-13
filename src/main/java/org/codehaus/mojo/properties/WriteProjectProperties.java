@@ -43,7 +43,6 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
@@ -51,7 +50,6 @@ import org.apache.maven.plugins.annotations.Mojo;
  * Writes project properties to a file.
  *
  * @author <a href="mailto:zarars@gmail.com">Zarar Siddiqi</a>
- * @version $Id$
  */
 @Mojo( name = "write-project-properties", defaultPhase = LifecyclePhase.NONE, threadSafe = true )
 public class WriteProjectProperties
@@ -59,7 +57,7 @@ public class WriteProjectProperties
 {
     /** {@inheritDoc} */
     public void execute()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException
     {
         validateOutputFile();
         Properties projProperties = new Properties();

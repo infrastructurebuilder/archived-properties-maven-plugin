@@ -45,9 +45,8 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
  *
  * @author <a href="mailto:zarars@gmail.com">Zarar Siddiqi</a>
  * @author <a href="mailto:Krystian.Nowak@gmail.com">Krystian Nowak</a>
- * @version $Id$
  */
-@Mojo( name = "read-project-properties", defaultPhase = LifecyclePhase.NONE, requiresProject = true, threadSafe = true )
+@Mojo( name = "read-project-properties", defaultPhase = LifecyclePhase.NONE, threadSafe = true )
 public class ReadPropertiesMojo
     extends AbstractMojo
 {
@@ -120,6 +119,17 @@ public class ReadPropertiesMojo
         this.keyPrefix = keyPrefix;
     }
 
+    @Parameter( defaultValue = "false", property = "prop.skipLoadProperties" )
+    private boolean skipLoadProperties;
+
+    /**
+     * If the plugin should process default values within property placeholders
+     *
+     * @parameter default-value="false"
+     */
+    @Parameter( defaultValue = "false" )
+    private boolean useDefaultValues;
+
     /**
      * Used for resolving property placeholders.
      */
@@ -127,15 +137,19 @@ public class ReadPropertiesMojo
 
     /** {@inheritDoc} */
     public void execute()
-        throws MojoExecutionException, MojoFailureException
+            throws MojoExecutionException, MojoFailureException
     {
-        checkParameters();
-
-        loadFiles();
-
-        loadUrls();
-
-        resolveProperties();
+        if ( !skipLoadProperties )
+        {
+            checkParameters();
+            loadFiles();
+            loadUrls();
+            resolveProperties();
+        }
+        else
+        {
+            getLog().warn( "The properties are ignored" );
+        }
     }
 
     private void checkParameters()
@@ -151,18 +165,18 @@ public class ReadPropertiesMojo
     private void loadFiles()
         throws MojoExecutionException
     {
-        for ( int i = 0; i < files.length; i++ )
+        for ( File file : files )
         {
-            load( new FileResource( files[i] ) );
+            load( new FileResource( file ) );
         }
     }
 
     private void loadUrls()
         throws MojoExecutionException
     {
-        for ( int i = 0; i < urls.length; i++ )
+        for ( String url : urls )
         {
-            load( new UrlResource( urls[i] ) );
+            load( new UrlResource( url ) );
         }
     }
 
@@ -186,28 +200,22 @@ public class ReadPropertiesMojo
         {
             getLog().debug( "Loading properties from " + resource );
 
-            final InputStream stream = resource.getInputStream();
-
-            try
+            try ( InputStream stream = resource.getInputStream() )
             {
                 if ( keyPrefix != null )
                 {
                     Properties properties = new Properties();
-                    properties.load(stream);
+                    properties.load( stream );
                     Properties projectProperties = project.getProperties();
-                    for(String key: properties.stringPropertyNames())
+                    for ( String key : properties.stringPropertyNames() )
                     {
-                        projectProperties.put(keyPrefix + key, properties.get(key));
+                        projectProperties.put( keyPrefix + key, properties.get( key ) );
                     }
                 }
                 else
                 {
                     project.getProperties().load( stream );
                 }
-            }
-            finally
-            {
-                stream.close();
             }
         }
         catch ( IOException e )
@@ -252,7 +260,7 @@ public class ReadPropertiesMojo
         {
             String k = (String) n.nextElement();
             String p = (String) projectProperties.get( k );
-            if ( p.indexOf( "${env." ) != -1 )
+            if ( p.contains( "${env." ) )
             {
                 useEnvVariables = true;
                 break;
@@ -278,7 +286,7 @@ public class ReadPropertiesMojo
     {
         try
         {
-            return resolver.getPropertyValue( k, p, environment );
+            return resolver.getPropertyValue( k, p, environment , useDefaultValues);
         }
         catch ( IllegalArgumentException e )
         {
@@ -309,6 +317,23 @@ public class ReadPropertiesMojo
     }
 
     /**
+     *
+     * @param skipLoadProperties Set to <code>true</code> if you don't want to load properties.
+     */
+    void setSkipLoadProperties( boolean skipLoadProperties )
+    {
+        this.skipLoadProperties = skipLoadProperties;
+    }
+
+    /**
+     * @param useDefaultValues set to <code>true</code> if default values need to be processed within property placeholders
+     */
+    public void setUseDefaultValues(boolean useDefaultValues)
+    {
+        this.useDefaultValues = useDefaultValues;
+    }
+
+    /**
      * Default scope for test access.
      *
      * @param project The test project.
@@ -316,6 +341,14 @@ public class ReadPropertiesMojo
     void setProject( MavenProject project )
     {
         this.project = project;
+    }
+
+    /**
+     * For test access.
+     * @return The test project
+     */
+    public MavenProject getProject() {
+        return project;
     }
 
     private static abstract class Resource
@@ -383,10 +416,10 @@ public class ReadPropertiesMojo
         {
             if ( url.startsWith( CLASSPATH_PREFIX ) )
             {
-                String resource = url.substring( CLASSPATH_PREFIX.length(), url.length() );
+                String resource = url.substring( CLASSPATH_PREFIX.length() );
                 if ( resource.startsWith( SLASH_PREFIX ) )
                 {
-                    resource = resource.substring( 1, resource.length() );
+                    resource = resource.substring( 1 );
                 }
                 this.url = getClass().getClassLoader().getResource( resource );
                 if ( this.url == null )
