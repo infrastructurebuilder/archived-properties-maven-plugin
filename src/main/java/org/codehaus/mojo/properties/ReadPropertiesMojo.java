@@ -45,13 +45,10 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
  *
  * @author <a href="mailto:zarars@gmail.com">Zarar Siddiqi</a>
  * @author <a href="mailto:Krystian.Nowak@gmail.com">Krystian Nowak</a>
- * @version $Id$
  */
-@Mojo( name = "read-project-properties", defaultPhase = LifecyclePhase.NONE, requiresProject = true, threadSafe = true )
-public class ReadPropertiesMojo
-    extends AbstractMojo
-{
-    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+@Mojo(name = "read-project-properties", defaultPhase = LifecyclePhase.NONE, threadSafe = true)
+public class ReadPropertiesMojo extends AbstractMojo {
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
     /**
@@ -63,16 +60,12 @@ public class ReadPropertiesMojo
     /**
      * @param files The files to set for tests.
      */
-    public void setFiles( File[] files )
-    {
-        if ( files == null )
-        {
+    public void setFiles(File[] files) {
+        if (files == null) {
             this.files = new File[0];
-        }
-        else
-        {
+        } else {
             this.files = new File[files.length];
-            System.arraycopy( files, 0, this.files, 0, files.length );
+            System.arraycopy(files, 0, this.files, 0, files.length);
         }
     }
 
@@ -89,23 +82,19 @@ public class ReadPropertiesMojo
      *
      * @param urls The URLs to set for tests.
      */
-    public void setUrls( String[] urls )
-    {
-        if ( urls == null )
-        {
+    public void setUrls(String[] urls) {
+        if (urls == null) {
             this.urls = null;
-        }
-        else
-        {
+        } else {
             this.urls = new String[urls.length];
-            System.arraycopy( urls, 0, this.urls, 0, urls.length );
+            System.arraycopy(urls, 0, this.urls, 0, urls.length);
         }
     }
 
     /**
      * If the plugin should be quiet if any of the files was not found
      */
-    @Parameter( defaultValue = "false" )
+    @Parameter(defaultValue = "false")
     private boolean quiet;
 
     /**
@@ -115,9 +104,31 @@ public class ReadPropertiesMojo
     @Parameter
     private String keyPrefix = null;
 
-    public void setKeyPrefix( String keyPrefix )
-    {
+    public void setKeyPrefix(String keyPrefix) {
         this.keyPrefix = keyPrefix;
+    }
+
+    @Parameter(defaultValue = "false", property = "prop.skipLoadProperties")
+    private boolean skipLoadProperties;
+
+    /**
+     * If the plugin should process default values within property placeholders
+     *
+     * @parameter default-value="false"
+     */
+    @Parameter(defaultValue = "false")
+    private boolean useDefaultValues;
+
+    /**
+     * Determine, whether existing properties should be overridden or not. Default: <code>true</true>.
+     *
+     * @since 1.2.0
+     */
+    @Parameter(defaultValue = "true")
+    private boolean override = true;
+
+    public void setOverride(boolean override) {
+        this.override = override;
     }
 
     /**
@@ -126,163 +137,116 @@ public class ReadPropertiesMojo
     private final PropertyResolver resolver = new PropertyResolver();
 
     /** {@inheritDoc} */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        checkParameters();
-
-        loadFiles();
-
-        loadUrls();
-
-        resolveProperties();
-    }
-
-    private void checkParameters()
-        throws MojoExecutionException
-    {
-        if ( files.length > 0 && urls.length > 0 )
-        {
-            throw new MojoExecutionException( "Set files or URLs but not both - otherwise "
-                + "no order of precedence can be guaranteed" );
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (!skipLoadProperties) {
+            checkParameters();
+            loadFiles();
+            loadUrls();
+            resolveProperties();
+        } else {
+            getLog().warn("The properties are ignored");
         }
     }
 
-    private void loadFiles()
-        throws MojoExecutionException
-    {
-        for ( int i = 0; i < files.length; i++ )
-        {
-            load( new FileResource( files[i] ) );
+    private void checkParameters() throws MojoExecutionException {
+        if (files.length > 0 && urls.length > 0) {
+            throw new MojoExecutionException(
+                    "Set files or URLs but not both - otherwise " + "no order of precedence can be guaranteed");
         }
     }
 
-    private void loadUrls()
-        throws MojoExecutionException
-    {
-        for ( int i = 0; i < urls.length; i++ )
-        {
-            load( new UrlResource( urls[i] ) );
+    private void loadFiles() throws MojoExecutionException {
+        for (File file : files) {
+            load(new FileResource(file));
         }
     }
 
-    private void load( Resource resource )
-        throws MojoExecutionException
-    {
-        if ( resource.canBeOpened() )
-        {
-            loadProperties( resource );
-        }
-        else
-        {
-            missing( resource );
+    private void loadUrls() throws MojoExecutionException {
+        for (String url : urls) {
+            load(new UrlResource(url));
         }
     }
 
-    private void loadProperties( Resource resource )
-        throws MojoExecutionException
-    {
-        try
-        {
-            getLog().debug( "Loading properties from " + resource );
+    private void load(Resource resource) throws MojoExecutionException {
+        if (resource.canBeOpened()) {
+            loadProperties(resource);
+        } else {
+            missing(resource);
+        }
+    }
 
-            final InputStream stream = resource.getInputStream();
+    private void loadProperties(Resource resource) throws MojoExecutionException {
+        try {
+            getLog().debug("Loading properties from " + resource);
 
-            try
-            {
-                if ( keyPrefix != null )
-                {
-                    Properties properties = new Properties();
-                    properties.load(stream);
-                    Properties projectProperties = project.getProperties();
-                    for(String key: properties.stringPropertyNames())
-                    {
-                        projectProperties.put(keyPrefix + key, properties.get(key));
+            try (InputStream stream = resource.getInputStream()) {
+                String effectivePrefix = "";
+                if (keyPrefix != null) {
+                    effectivePrefix = keyPrefix;
+                }
+
+                Properties properties = new Properties();
+                properties.load(stream);
+                Properties projectProperties = project.getProperties();
+
+                for (String key : properties.stringPropertyNames()) {
+                    String propertyName = effectivePrefix + key;
+                    if (override || !projectProperties.containsKey(propertyName)) {
+                        projectProperties.put(propertyName, properties.get(key));
                     }
                 }
-                else
-                {
-                    project.getProperties().load( stream );
-                }
             }
-            finally
-            {
-                stream.close();
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Error reading properties from " + resource, e );
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error reading properties from " + resource, e);
         }
     }
 
-    private void missing( Resource resource )
-        throws MojoExecutionException
-    {
-        if ( quiet )
-        {
-            getLog().info( "Quiet processing - ignoring properties cannot be loaded from " + resource );
-        }
-        else
-        {
-            throw new MojoExecutionException( "Properties could not be loaded from " + resource );
+    private void missing(Resource resource) throws MojoExecutionException {
+        if (quiet) {
+            getLog().info("Quiet processing - ignoring properties cannot be loaded from " + resource);
+        } else {
+            throw new MojoExecutionException("Properties could not be loaded from " + resource);
         }
     }
 
-    private void resolveProperties()
-        throws MojoExecutionException, MojoFailureException
-    {
+    private void resolveProperties() throws MojoExecutionException, MojoFailureException {
         Properties environment = loadSystemEnvironmentPropertiesWhenDefined();
         Properties projectProperties = project.getProperties();
 
-        for ( Enumeration<?> n = projectProperties.propertyNames(); n.hasMoreElements(); )
-        {
+        for (Enumeration<?> n = projectProperties.propertyNames(); n.hasMoreElements(); ) {
             String k = (String) n.nextElement();
-            projectProperties.setProperty( k, getPropertyValue( k, projectProperties, environment ) );
+            projectProperties.setProperty(k, getPropertyValue(k, projectProperties, environment));
         }
     }
 
-    private Properties loadSystemEnvironmentPropertiesWhenDefined()
-        throws MojoExecutionException
-    {
+    private Properties loadSystemEnvironmentPropertiesWhenDefined() throws MojoExecutionException {
         Properties projectProperties = project.getProperties();
 
         boolean useEnvVariables = false;
-        for ( Enumeration<?> n = projectProperties.propertyNames(); n.hasMoreElements(); )
-        {
+        for (Enumeration<?> n = projectProperties.propertyNames(); n.hasMoreElements(); ) {
             String k = (String) n.nextElement();
-            String p = (String) projectProperties.get( k );
-            if ( p.indexOf( "${env." ) != -1 )
-            {
+            String p = (String) projectProperties.get(k);
+            if (p.contains("${env.")) {
                 useEnvVariables = true;
                 break;
             }
         }
         Properties environment = null;
-        if ( useEnvVariables )
-        {
-            try
-            {
+        if (useEnvVariables) {
+            try {
                 environment = getSystemEnvVars();
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Error getting system environment variables: ", e );
+            } catch (IOException e) {
+                throw new MojoExecutionException("Error getting system environment variables: ", e);
             }
         }
         return environment;
     }
 
-    private String getPropertyValue( String k, Properties p, Properties environment )
-        throws MojoFailureException
-    {
-        try
-        {
-            return resolver.getPropertyValue( k, p, environment );
-        }
-        catch ( IllegalArgumentException e )
-        {
-            throw new MojoFailureException( e.getMessage() );
+    private String getPropertyValue(String k, Properties p, Properties environment) throws MojoFailureException {
+        try {
+            return resolver.getPropertyValue(k, p, environment, useDefaultValues);
+        } catch (IllegalArgumentException e) {
+            throw new MojoFailureException(e.getMessage());
         }
     }
 
@@ -292,9 +256,7 @@ public class ReadPropertiesMojo
      * @return The shell environment variables, can be empty but never <code>null</code>.
      * @throws IOException If the environment variables could not be queried from the shell.
      */
-    Properties getSystemEnvVars()
-        throws IOException
-    {
+    Properties getSystemEnvVars() throws IOException {
         return CommandLineUtils.getSystemEnvVars();
     }
 
@@ -303,9 +265,23 @@ public class ReadPropertiesMojo
      *
      * @param quiet Set to <code>true</code> if missing files can be skipped.
      */
-    void setQuiet( boolean quiet )
-    {
+    void setQuiet(boolean quiet) {
         this.quiet = quiet;
+    }
+
+    /**
+     *
+     * @param skipLoadProperties Set to <code>true</code> if you don't want to load properties.
+     */
+    void setSkipLoadProperties(boolean skipLoadProperties) {
+        this.skipLoadProperties = skipLoadProperties;
+    }
+
+    /**
+     * @param useDefaultValues set to <code>true</code> if default values need to be processed within property placeholders
+     */
+    public void setUseDefaultValues(boolean useDefaultValues) {
+        this.useDefaultValues = useDefaultValues;
     }
 
     /**
@@ -313,61 +289,54 @@ public class ReadPropertiesMojo
      *
      * @param project The test project.
      */
-    void setProject( MavenProject project )
-    {
+    void setProject(MavenProject project) {
         this.project = project;
     }
 
-    private static abstract class Resource
-    {
+    /**
+     * For test access.
+     * @return The test project
+     */
+    public MavenProject getProject() {
+        return project;
+    }
+
+    private abstract static class Resource {
         private InputStream stream;
 
         public abstract boolean canBeOpened();
 
-        protected abstract InputStream openStream()
-            throws IOException;
+        protected abstract InputStream openStream() throws IOException;
 
-        public InputStream getInputStream()
-            throws IOException
-        {
-            if ( stream == null )
-            {
+        public InputStream getInputStream() throws IOException {
+            if (stream == null) {
                 stream = openStream();
             }
             return stream;
         }
     }
 
-    private static class FileResource
-        extends Resource
-    {
+    private static class FileResource extends Resource {
         private final File file;
 
-        public FileResource( File file )
-        {
+        FileResource(File file) {
             this.file = file;
         }
 
-        public boolean canBeOpened()
-        {
+        public boolean canBeOpened() {
             return file.exists();
         }
 
-        protected InputStream openStream()
-            throws IOException
-        {
-            return new BufferedInputStream( new FileInputStream( file ) );
+        protected InputStream openStream() throws IOException {
+            return new BufferedInputStream(new FileInputStream(file));
         }
 
-        public String toString()
-        {
+        public String toString() {
             return "File: " + file;
         }
     }
 
-    private static class UrlResource
-        extends Resource
-    {
+    private static class UrlResource extends Resource {
         private static final String CLASSPATH_PREFIX = "classpath:";
 
         private static final String SLASH_PREFIX = "/";
@@ -378,63 +347,44 @@ public class ReadPropertiesMojo
 
         private String classpathUrl;
 
-        public UrlResource( String url )
-            throws MojoExecutionException
-        {
-            if ( url.startsWith( CLASSPATH_PREFIX ) )
-            {
-                String resource = url.substring( CLASSPATH_PREFIX.length(), url.length() );
-                if ( resource.startsWith( SLASH_PREFIX ) )
-                {
-                    resource = resource.substring( 1, resource.length() );
+        UrlResource(String url) throws MojoExecutionException {
+            if (url.startsWith(CLASSPATH_PREFIX)) {
+                String resource = url.substring(CLASSPATH_PREFIX.length());
+                if (resource.startsWith(SLASH_PREFIX)) {
+                    resource = resource.substring(1);
                 }
-                this.url = getClass().getClassLoader().getResource( resource );
-                if ( this.url == null )
-                {
+                this.url = getClass().getClassLoader().getResource(resource);
+                if (this.url == null) {
                     isMissingClasspathResouce = true;
                     classpathUrl = url;
                 }
-            }
-            else
-            {
-                try
-                {
-                    this.url = new URL( url );
-                }
-                catch ( MalformedURLException e )
-                {
-                    throw new MojoExecutionException( "Badly formed URL " + url + " - " + e.getMessage() );
+            } else {
+                try {
+                    this.url = new URL(url);
+                } catch (MalformedURLException e) {
+                    throw new MojoExecutionException("Badly formed URL " + url + " - " + e.getMessage());
                 }
             }
         }
 
-        public boolean canBeOpened()
-        {
-            if ( isMissingClasspathResouce )
-            {
+        public boolean canBeOpened() {
+            if (isMissingClasspathResouce) {
                 return false;
             }
-            try
-            {
+            try {
                 openStream();
-            }
-            catch ( IOException e )
-            {
+            } catch (IOException e) {
                 return false;
             }
             return true;
         }
 
-        protected InputStream openStream()
-            throws IOException
-        {
-            return new BufferedInputStream( url.openStream() );
+        protected InputStream openStream() throws IOException {
+            return new BufferedInputStream(url.openStream());
         }
 
-        public String toString()
-        {
-            if ( !isMissingClasspathResouce )
-            {
+        public String toString() {
+            if (!isMissingClasspathResouce) {
                 return "URL " + url.toString();
             }
             return classpathUrl;

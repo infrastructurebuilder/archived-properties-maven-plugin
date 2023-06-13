@@ -21,8 +21,7 @@ package org.codehaus.mojo.properties;
 
 import java.util.Properties;
 
-class PropertyResolver
-{
+class PropertyResolver {
 
     /**
      * Retrieves a property value, replacing values like ${token} using the Properties to look them up. Shamelessly
@@ -38,42 +37,65 @@ class PropertyResolver
      * @return resolved property value
      * @throws IllegalArgumentException when properties are circularly defined
      */
-    public String getPropertyValue( String key, Properties properties, Properties environment )
-    {
-        String value = properties.getProperty( key );
+    public String getPropertyValue(String key, Properties properties, Properties environment) {
+        return getPropertyValue(key, properties, environment, false);
+    }
 
-        ExpansionBuffer buffer = new ExpansionBuffer( value );
+    /**
+     * Same as the previous method. Accepts an extra flag to indicate whether default values should be
+     * processed within property placeholders or not.
+     *
+     * @param key           property key
+     * @param properties           project properties
+     * @param environment environment variables
+     * @param useDefaultValues    process default values flag
+     * @return resolved property value
+     * @throws IllegalArgumentException when properties are circularly defined
+     */
+    public String getPropertyValue(
+            String key, Properties properties, Properties environment, boolean useDefaultValues) {
+        String value = properties.getProperty(key);
 
-        CircularDefinitionPreventer circularDefinitionPreventer =
-            new CircularDefinitionPreventer().visited( key, value );
+        ExpansionBuffer buffer;
+        if (useDefaultValues) {
+            buffer = new DefaultValuesAwareExpansionBufferImpl(value);
+        } else {
+            buffer = new ExpansionBufferImpl(value);
+        }
 
-        while ( buffer.hasMoreLegalPlaceholders() )
-        {
-            String newKey = buffer.extractPropertyKey();
-            String newValue = fromPropertiesThenSystemThenEnvironment( newKey, properties, environment );
+        CircularDefinitionPreventer circularDefinitionPreventer = new CircularDefinitionPreventer().visited(key, value);
 
-            circularDefinitionPreventer.visited( newKey, newValue );
+        while (buffer.hasMoreLegalPlaceholders()) {
+            KeyAndDefaultValue kv = buffer.extractPropertyKeyAndDefaultValue();
+            String newKey = kv.getKey();
+            String newValue =
+                    fromPropertiesThenSystemThenEnvironment(newKey, kv.getDefaultValue(), properties, environment);
 
-            buffer.add( newKey, newValue );
+            circularDefinitionPreventer.visited(newKey, newValue);
+
+            buffer.add(newKey, newValue);
         }
 
         return buffer.toString();
     }
 
-    private String fromPropertiesThenSystemThenEnvironment( String key, Properties properties, Properties environment )
-    {
-        String value = properties.getProperty( key );
+    private String fromPropertiesThenSystemThenEnvironment(
+            String key, String defaultValue, Properties properties, Properties environment) {
+        String value = properties.getProperty(key);
 
         // try global environment
-        if ( value == null )
-        {
-            value = System.getProperty( key );
+        if (value == null) {
+            value = System.getProperty(key);
         }
 
         // try environment variable
-        if ( value == null && key.startsWith( "env." ) && environment != null )
-        {
-            value = environment.getProperty( key.substring( 4 ) );
+        if (value == null && key.startsWith("env.") && environment != null) {
+            value = environment.getProperty(key.substring(4));
+        }
+
+        // try default value
+        if (value == null) {
+            value = defaultValue;
         }
 
         return value;
