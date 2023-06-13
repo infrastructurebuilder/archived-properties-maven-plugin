@@ -31,10 +31,6 @@ import java.util.Properties;
  * Writes properties of all active profiles to a file.
  *
  * @author <a href="mailto:zarars@gmail.com">Zarar Siddiqi</a>
-<<<<<<< HEAD
- * @version $Id$
-=======
->>>>>>> master
  */
 @Mojo( name = "write-active-profile-properties", defaultPhase = LifecyclePhase.NONE, threadSafe = true )
 public class WriteActiveProfileProperties
