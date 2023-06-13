@@ -29,8 +29,7 @@
 
   <groupId>org.infrastructurebuilder.maven</groupId>
   <artifactId>properties-maven-plugin</artifactId>
-  <version>1.0.12-ib-SNAPSHOT</version>
-
+  <version>1.2.0.0-ib-SNAPSHOT</version>
   <name>Infrastructurebuilder Properties Maven Plugin</name>
   <description>
     The Properties Maven Plugin is here to make life a little easier when dealing
