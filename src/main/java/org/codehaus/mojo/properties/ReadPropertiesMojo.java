@@ -203,20 +203,21 @@ public class ReadPropertiesMojo extends AbstractMojo {
             getLog().debug(String.format(
                     "Loading properties from %s using encoding %s", resource.toString(), this.encoding));
             try (InputStream stream = resource.getInputStream()) {
-              String effectivePrefix = "";
-              if (keyPrefix != null) {
-                  effectivePrefix = keyPrefix;
-              }
-              try (InputStreamReader streamReader = new InputStreamReader(stream, this.encoding)) {
-                  Properties properties = new Properties();
-                  properties.load(streamReader);
-                  Properties projectProperties = project.getProperties();
-                  for (String key : properties.stringPropertyNames()) {
-                      projectProperties.put(effectivePrefix + key, properties.get(key));
-                      if (override || !projectProperties.containsKey(propertyName)) {
-                        projectProperties.put(propertyName, properties.get(key));
-                      }
-                  }
+                String effectivePrefix = "";
+                if (keyPrefix != null) {
+                    effectivePrefix = keyPrefix;
+                }
+                try (InputStreamReader streamReader = new InputStreamReader(stream, this.encoding)) {
+                    Properties properties = new Properties();
+                    properties.load(streamReader);
+                    Properties projectProperties = project.getProperties();
+                    for (String key : properties.stringPropertyNames()) {
+                        String propertyName = effectivePrefix + key;
+                        if (override || !projectProperties.containsKey(propertyName)) {
+                            projectProperties.put(propertyName, properties.get(key));
+                        }
+                    }
+                }
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading properties from " + resource, e);
