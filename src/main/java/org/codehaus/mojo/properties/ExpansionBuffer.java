@@ -24,7 +24,7 @@ abstract class ExpansionBuffer {
 
     protected String unresolved;
 
-    ExpansionBuffer(String unresolved) {
+    protected ExpansionBuffer(String unresolved) {
         this.unresolved = unresolved != null ? unresolved : "";
     }
 
@@ -37,7 +37,8 @@ abstract class ExpansionBuffer {
     public abstract KeyAndDefaultValue extractPropertyKeyAndDefaultValue();
 
     public String toString() {
-        return resolved.append(unresolved).toString();
+        StringBuilder sb = new StringBuilder(resolved);
+        return sb.append(unresolved).toString();
     }
 
     public void add(String newKey, String newValue) {

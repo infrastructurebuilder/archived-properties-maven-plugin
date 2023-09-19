@@ -18,61 +18,6 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-<<<<<<< HEAD
-<settings
-  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd"
-  xmlns="http://maven.apache.org/SETTINGS/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
- <mirrors>
-    <mirror>
-      <id>it-repo</id>
-      <name>RPM</name>
-      <url>@localRepositoryUrl@</url>
-      <mirrorOf>*</mirrorOf>
-    </mirror>
-  </mirrors>
-  <servers>
-    <server>
-      <id>y</id>
-      <username>X</username>
-    </server>
-  </servers>
-  <profiles>
-    <profile>
-      <id>it-repo</id>
-      <properties>
-        <bob>dog</bob>
-      </properties>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <repositories>
-        <repository>
-          <id>local.central</id>
-          <url>@localRepositoryUrl@</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
-      <pluginRepositories>
-        <pluginRepository>
-          <id>local.central</id>
-          <url>@localRepositoryUrl@</url>
-          <releases>
-            <enabled>true</enabled>
-          </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
-        </pluginRepository>
-      </pluginRepositories>
-    </profile>
-  </profiles>
-</settings>
-=======
 
 <settings>
   <profiles>
@@ -108,4 +53,3 @@ under the License.
     <activeProfile>it-repo</activeProfile>
   </activeProfiles>
 </settings>
->>>>>>> d8a48cd030ac3d57235927c8b5f42fae652dc49a

@@ -41,10 +41,9 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
- * The read-project-properties goal reads property files and URLs and stores the
- * properties as project properties. It serves as an alternate to specifying
- * properties in pom.xml. It is especially useful when making properties defined
- * in a runtime resource available at build time.
+ * The read-project-properties goal reads property files and URLs and stores the properties as project properties. It
+ * serves as an alternate to specifying properties in pom.xml. It is especially useful when making properties defined in
+ * a runtime resource available at build time.
  *
  * @author <a href="mailto:zarars@gmail.com">Zarar Siddiqi</a>
  * @author <a href="mailto:Krystian.Nowak@gmail.com">Krystian Nowak</a>
@@ -79,10 +78,9 @@ public class ReadPropertiesMojo extends AbstractMojo {
     }
 
     /**
-     * The URLs that will be used when reading properties. These may be non-standard
-     * URLs of the form <code>classpath:com/company/resource.properties</code>. Note
-     * that the type is not <code>URL</code> for this reason and therefore will be
-     * explicitly checked by this Mojo.
+     * The URLs that will be used when reading properties. These may be non-standard URLs of the form
+     * <code>classpath:com/company/resource.properties</code>. Note that the type is not <code>URL</code> for this
+     * reason and therefore will be explicitly checked by this Mojo.
      */
     @Parameter
     private String[] urls = new String[0];
@@ -108,8 +106,8 @@ public class ReadPropertiesMojo extends AbstractMojo {
     private boolean quiet;
 
     /**
-     * Prefix that will be added before name of each property. Can be useful for
-     * separating properties with same name from different files.
+     * Prefix that will be added before name of each property.
+     * Can be useful for separating properties with same name from different files.
      */
     @Parameter
     private String keyPrefix = null;
@@ -138,6 +136,18 @@ public class ReadPropertiesMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "false")
     private boolean useDefaultValues;
+
+    /**
+     * Determine, whether existing properties should be overridden or not. Default: <code>true</true>.
+     *
+     * @since 1.2.0
+     */
+    @Parameter(defaultValue = "true")
+    private boolean override = true;
+
+    public void setOverride(boolean override) {
+        this.override = override;
+    }
 
     /**
      * Used for resolving property placeholders.
@@ -193,18 +203,20 @@ public class ReadPropertiesMojo extends AbstractMojo {
             getLog().debug(String.format(
                     "Loading properties from %s using encoding %s", resource.toString(), this.encoding));
             try (InputStream stream = resource.getInputStream()) {
-                try (InputStreamReader streamReader = new InputStreamReader(stream, this.encoding)) {
-                    if (keyPrefix != null) {
-                        Properties properties = new Properties();
-                        properties.load(streamReader);
-                        Properties projectProperties = project.getProperties();
-                        for (String key : properties.stringPropertyNames()) {
-                            projectProperties.put(keyPrefix + key, properties.get(key));
-                        }
-                    } else {
-                        project.getProperties().load(streamReader);
-                    }
-                }
+              String effectivePrefix = "";
+              if (keyPrefix != null) {
+                  effectivePrefix = keyPrefix;
+              }
+              try (InputStreamReader streamReader = new InputStreamReader(stream, this.encoding)) {
+                  Properties properties = new Properties();
+                  properties.load(streamReader);
+                  Properties projectProperties = project.getProperties();
+                  for (String key : properties.stringPropertyNames()) {
+                      projectProperties.put(effectivePrefix + key, properties.get(key));
+                      if (override || !projectProperties.containsKey(propertyName)) {
+                        projectProperties.put(propertyName, properties.get(key));
+                      }
+                  }
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Error reading properties from " + resource, e);
@@ -263,10 +275,8 @@ public class ReadPropertiesMojo extends AbstractMojo {
     /**
      * Override-able for test purposes.
      *
-     * @return The shell environment variables, can be empty but never
-     *         <code>null</code>.
-     * @throws IOException If the environment variables could not be queried from
-     *                     the shell.
+     * @return The shell environment variables, can be empty but never <code>null</code>.
+     * @throws IOException If the environment variables could not be queried from the shell.
      */
     Properties getSystemEnvVars() throws IOException {
         return CommandLineUtils.getSystemEnvVars();
@@ -283,16 +293,14 @@ public class ReadPropertiesMojo extends AbstractMojo {
 
     /**
      *
-     * @param skipLoadProperties Set to <code>true</code> if you don't want to load
-     *                           properties.
+     * @param skipLoadProperties Set to <code>true</code> if you don't want to load properties.
      */
     void setSkipLoadProperties(boolean skipLoadProperties) {
         this.skipLoadProperties = skipLoadProperties;
     }
 
     /**
-     * @param useDefaultValues set to <code>true</code> if default values need to be
-     *                         processed within property placeholders
+     * @param useDefaultValues set to <code>true</code> if default values need to be processed within property placeholders
      */
     public void setUseDefaultValues(boolean useDefaultValues) {
         this.useDefaultValues = useDefaultValues;
@@ -309,7 +317,6 @@ public class ReadPropertiesMojo extends AbstractMojo {
 
     /**
      * For test access.
-     *
      * @return The test project
      */
     public MavenProject getProject() {
