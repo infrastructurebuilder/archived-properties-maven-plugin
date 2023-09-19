@@ -1,9 +1,5 @@
 package org.codehaus.mojo.properties;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,10 +19,8 @@ import java.util.Properties;
  * under the License.
  */
 
-import org.apache.maven.model.Profile;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
+import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,7 +32,7 @@ import org.apache.maven.plugins.annotations.Mojo;
  *
  * @author <a href="mailto:zarars@gmail.com">Zarar Siddiqi</a>
  */
-@Mojo( name = "write-active-profile-properties", defaultPhase = LifecyclePhase.NONE, threadSafe = true )
+@Mojo(name = "write-active-profile-properties", defaultPhase = LifecyclePhase.NONE, threadSafe = true)
 public class WriteActiveProfileProperties extends AbstractWritePropertiesMojo {
     /** {@inheritDoc} */
     public void execute() throws MojoExecutionException {

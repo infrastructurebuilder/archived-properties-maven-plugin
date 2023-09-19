@@ -48,7 +48,7 @@ class CircularDefinitionPreventer {
      */
     public CircularDefinitionPreventer visited(String key, String value) {
         entriesVisited.add(new VisitedProperty(key, value));
-        if (keysUsed.contains(key) && !isValueResolved(value)) {
+        if (keysUsed.contains(key)) {
             circularDefinition();
         } else {
             keysUsed.add(key);
@@ -67,11 +67,5 @@ class CircularDefinitionPreventer {
             }
         }
         throw new IllegalArgumentException(buffer.toString());
-    }
-
-    private boolean isValueResolved(String value) {
-        int prefixPos = value.indexOf("${");
-        int suffixPos = value.indexOf("}");
-        return !(prefixPos >= 0 && suffixPos > prefixPos);
     }
 }

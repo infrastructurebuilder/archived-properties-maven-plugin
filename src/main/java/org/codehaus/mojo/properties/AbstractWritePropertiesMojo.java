@@ -56,7 +56,7 @@ public abstract class AbstractWritePropertiesMojo extends AbstractMojo {
     /**
      * The encoding to use when writing the properties file.
      */
-    @Parameter( required = false, defaultValue = DEFAULT_ENCODING )
+    @Parameter(required = false, defaultValue = DEFAULT_ENCODING)
     private String encoding = DEFAULT_ENCODING;
 
     /**
@@ -64,8 +64,7 @@ public abstract class AbstractWritePropertiesMojo extends AbstractMojo {
      *
      * @param project The test project.
      */
-    void setProject( MavenProject project )
-    {
+    void setProject(MavenProject project) {
         this.project = project;
     }
 
@@ -74,8 +73,7 @@ public abstract class AbstractWritePropertiesMojo extends AbstractMojo {
      *
      * @param encoding to write the output file in
      */
-    void setEncoding( String encoding )
-    {
+    void setEncoding(String encoding) {
         this.encoding = encoding;
     }
 
@@ -87,8 +85,6 @@ public abstract class AbstractWritePropertiesMojo extends AbstractMojo {
     void setOutputFile(File outputFile) {
         this.outputFile = outputFile;
     }
-
-
 
     /**
      * @param properties {@link Properties}
@@ -108,11 +104,10 @@ public abstract class AbstractWritePropertiesMojo extends AbstractMojo {
     }
 
     // https://github.com/apache/maven-archiver/blob/master/src/main/java/org/apache/maven/archiver/PomPropertiesUtil.java#L81
-    private void storeWithoutTimestamp( Properties properties, File outputFile, String comments )
-        throws IOException
-    {
-      try ( PrintWriter pw = new PrintWriter( outputFile, this.encoding ); StringWriter sw = new StringWriter() )        {
-            properties.store( sw, comments );
+    private void storeWithoutTimestamp(Properties properties, File outputFile, String comments) throws IOException {
+        try (PrintWriter pw = new PrintWriter(outputFile, this.encoding);
+                StringWriter sw = new StringWriter()) {
+            properties.store(sw, comments);
             comments = '#' + comments;
 
             List<String> lines = new ArrayList<>();
@@ -147,15 +142,10 @@ public abstract class AbstractWritePropertiesMojo extends AbstractMojo {
     /**
      * @throws MojoExecutionException {@link MojoExecutionException}
      */
-    protected void validateEncoding()
-        throws MojoExecutionException
-    {
-        try
-        {
+    protected void validateEncoding() throws MojoExecutionException {
+        try {
             Charset.forName(this.encoding);
-        }
-        catch(IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             throw new MojoExecutionException(String.format("Invalid encoding '%s'", this.encoding), e);
         }
     }
