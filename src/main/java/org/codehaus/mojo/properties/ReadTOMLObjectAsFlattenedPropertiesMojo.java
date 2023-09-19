@@ -104,7 +104,7 @@ public class ReadTOMLObjectAsFlattenedPropertiesMojo extends AbstractMojo {
     private void checkParameters() throws MojoExecutionException {
         int count = 0;
         if (localPaths.length > 0) {
-          count++;
+            count++;
         }
         if (count != 1) {
             throw new MojoExecutionException("Set localPaths");
@@ -265,7 +265,7 @@ public class ReadTOMLObjectAsFlattenedPropertiesMojo extends AbstractMojo {
         protected String openTOMLString() throws IOException {
             String s = new String(Files.readAllBytes(file.toPath()));
             if (!reformat) {
-              return s;
+                return s;
             }
             StringBuffer sb = new StringBuffer();
             for (String l : Arrays.asList(s.split("\n"))) {

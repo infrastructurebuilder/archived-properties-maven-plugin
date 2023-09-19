@@ -130,13 +130,13 @@ public class ReadJSONObjectAsFlattenedPropertiesMojo extends AbstractMojo {
     private void checkParameters() throws MojoExecutionException {
         int count = 0;
         if (localPaths.length > 0) {
-          count++;
+            count++;
         }
         if (s3Urls.length > 0) {
-          count++;
+            count++;
         }
         if (artifactRepoRemoteStates.length > 0) {
-          count++;
+            count++;
         }
         if (count != 1) {
             throw new MojoExecutionException(
@@ -301,7 +301,7 @@ public class ReadJSONObjectAsFlattenedPropertiesMojo extends AbstractMojo {
     private static class LocalPathResource extends TFStateResource {
         private final File file;
 
-         LocalPathResource(File file) {
+        LocalPathResource(File file) {
             this.file = file;
         }
 
@@ -321,7 +321,7 @@ public class ReadJSONObjectAsFlattenedPropertiesMojo extends AbstractMojo {
     private static class ArtifactRepoResource extends TFStateResource {
         private ArtifactRepoRemoteState target;
 
-         ArtifactRepoResource(ArtifactRepoRemoteState rs, ArtifactRepoRemoteState defaults, Settings settings)
+        ArtifactRepoResource(ArtifactRepoRemoteState rs, ArtifactRepoRemoteState defaults, Settings settings)
                 throws MojoExecutionException {
             this.target = Objects.requireNonNull(rs).validate(defaults, settings);
         }
@@ -340,8 +340,7 @@ public class ReadJSONObjectAsFlattenedPropertiesMojo extends AbstractMojo {
     private static class S3UrlResource extends TFStateResource {
         private final S3RemoteState rs;
 
-         S3UrlResource(S3RemoteState rs, S3RemoteState defaults, Settings settings)
-                throws MojoExecutionException {
+        S3UrlResource(S3RemoteState rs, S3RemoteState defaults, Settings settings) throws MojoExecutionException {
             this.rs = Objects.requireNonNull(rs, "s3 remote state must not be null")
                     .validate(defaults, settings);
         }
@@ -360,7 +359,7 @@ public class ReadJSONObjectAsFlattenedPropertiesMojo extends AbstractMojo {
         }
 
         public String toString() {
-                return rs.toString();
+            return rs.toString();
         }
     }
 
@@ -369,7 +368,7 @@ public class ReadJSONObjectAsFlattenedPropertiesMojo extends AbstractMojo {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(conn))) {
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-              sb.append(inputLine);
+                sb.append(inputLine);
             }
         }
         try {

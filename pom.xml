@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   Licensed to the Apache Software Foundation (ASF) under one
   or more contributor license agreements. See the NOTICE file
@@ -18,60 +17,61 @@
   specific language governing permissions and limitations
   under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>mojo-parent</artifactId>
-    <version>50</version>
+    <version>76</version>
   </parent>
-
-  <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.infrastructurebuilder.maven</groupId>
   <artifactId>properties-maven-plugin</artifactId>
   <version>1.2.0.1-ib-SNAPSHOT</version>
   <name>Infrastructurebuilder Properties Maven Plugin</name>
-  <description>
-    The Properties Maven Plugin is here to make life a little easier when dealing
+  <description>The Properties Maven Plugin is here to make life a little easier when dealing
     with properties. It provides goals to read and write properties from files.
 
-    This was forked from the original properties-maven-plugin to fix issue mojohaus/properties-maven-plugin#30.
+    This was forked from the original properties-maven-plugin to fix issue mojohaus/properties-maven-plugin#30.</description>
 
-  </description>
+  <url>https://www.mojohaus.org/properties-maven-plugin</url>
 
   <inceptionYear>2009</inceptionYear>
-
-  <packaging>maven-plugin</packaging>
-
-  <url>http://www.mojohaus.org/properties-maven-plugin</url>
 
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
 
-  <properties>
-    <mavenVersion>3.2.5</mavenVersion>
-    <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
-    <gpg.signing.profiles>release,IBgpgsigning</gpg.signing.profiles>
-    <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
-    <maven.release.plugin.version>3.0.0-M4</maven.release.plugin.version>
-    <maven.nexus.staging.plugin.version>1.6.8</maven.nexus.staging.plugin.version>
-    <maven.release.plugin.version>3.0.0-M4</maven.release.plugin.version>
-    <maven.nexus.staging.plugin.skipStaging>false</maven.nexus.staging.plugin.skipStaging>
-  </properties>
-
+  <developers>
+    <developer>
+      <id>arsenalist</id>
+      <name>Zarar Siddiqi</name>
+      <email>zarars@gmail.com</email>
+      <url>http://arsenalist.com/tech</url>
+    </developer>
+    <developer>
+      <id>krystian</id>
+      <name>Krystian Nowak</name>
+      <email>Krystian.Nowak@gmail.com</email>
+    </developer>
+    <developer>
+      <id>timothygordon32@gmail.com</id>
+      <name>Tim Gordon</name>
+      <email>timothygordon32@gmail.com</email>
+    </developer>
+  </developers>
 
   <scm>
     <connection>scm:git:https://github.com/infrastructurebuilder/properties-maven-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/infrastructurebuilder/properties-maven-plugin.git</developerConnection>
-    <url>https://github.com/infrastructurebuilder/properties-maven-plugin</url>
     <tag>HEAD</tag>
+    <url>https://github.com/infrastructurebuilder/properties-maven-plugin</url>
   </scm>
   <issueManagement>
     <system>GitHub</system>
@@ -92,49 +92,38 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <developers>
-    <developer>
-      <id>arsenalist</id>
-      <name>Zarar Siddiqi</name>
-      <email>zarars@gmail.com</email>
-      <url>http://arsenalist.com/tech</url>
-    </developer>
-    <developer>
-      <id>krystian</id>
-      <name>Krystian Nowak</name>
-      <email>Krystian.Nowak@gmail.com</email>
-    </developer>
-    <developer>
-      <id>timothygordon32@gmail.com</id>
-      <name>Tim Gordon</name>
-      <email>timothygordon32@gmail.com</email>
-    </developer>
-  </developers>
+  <properties>
+    <mavenVersion>3.5.4</mavenVersion>
+    <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
+    <gpg.signing.profiles>release,IBgpgsigning</gpg.signing.profiles>
+    <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
+    <maven.release.plugin.version>3.0.0-M4</maven.release.plugin.version>
+    <maven.nexus.staging.plugin.version>1.6.8</maven.nexus.staging.plugin.version>
+    <maven.release.plugin.version>3.0.0-M4</maven.release.plugin.version>
+    <maven.nexus.staging.plugin.skipStaging>false</maven.nexus.staging.plugin.skipStaging>
+    <recommendedJavaBuildVersion>11</recommendedJavaBuildVersion>
+    <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
+    <project.build.outputTimestamp>2023-07-27T21:53:50Z</project.build.outputTimestamp>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
       <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model-builder</artifactId>
-      <version>${mavenVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
       <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>${mavenVersion}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -144,7 +133,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>3.2.1</version>
+      <version>4.0.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -223,20 +212,68 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>run-its</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <configuration>
+              <addTestClassPath>true</addTestClassPath>
+              <debug>true</debug>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+              <projectsDirectory>src/it</projectsDirectory>
+              <showVersion>true</showVersion>
+              <setupIncludes>
+                <setupInclude>setup/pom.xml</setupInclude>
+              </setupIncludes>
+              <pomIncludes>
+                <pomInclude>*/pom.xml</pomInclude>
+              </pomIncludes>
+              <preBuildHookScript>setup</preBuildHookScript>
+              <postBuildHookScript>verify</postBuildHookScript>
+              <settingsFile>src/it/settings.xml</settingsFile>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>install</goal>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+                <phase>integration-test</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>java11+</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+            <configuration>
+              <configLocation>${checkstyle.spotless.config}</configLocation>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>release</id>
       <build>
@@ -261,43 +298,6 @@
                   <goal>sign</goal>
                 </goals>
                 <phase>verify</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>run-its</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <version>3.2.2</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>install</goal>
-                  <goal>run</goal>
-                </goals>
-                <phase>integration-test</phase>
-                <configuration>
-                  <projectsDirectory>src/it</projectsDirectory>
-                  <addTestClassPath>true</addTestClassPath>
-                  <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                  <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                  <invokerPropertiesFile>invoke.properties</invokerPropertiesFile>
-                  <preBuildHookScript>prepare</preBuildHookScript>
-                  <postBuildHookScript>verify</postBuildHookScript>
-                  <debug>true</debug>
-                  <environmentVariables>
-                    <testing.versionUnderTest>${project.version}</testing.versionUnderTest>
-                  </environmentVariables>
-                  <scriptVariables>
-                    <resultsBase>${project.build.directory}/itresults</resultsBase>
-                  </scriptVariables>
-                  <settingsFile>src/it/settings.xml</settingsFile>
-                </configuration>
               </execution>
             </executions>
           </plugin>

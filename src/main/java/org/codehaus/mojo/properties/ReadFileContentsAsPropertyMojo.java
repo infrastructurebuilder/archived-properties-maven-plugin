@@ -76,7 +76,7 @@ public class ReadFileContentsAsPropertyMojo extends AbstractMojo {
 
     private void loadFiles() throws MojoExecutionException {
         for (Entry<String, File> x : localPaths.entrySet()) {
-          load(x.getKey(), new LocalPathResource(x.getValue()));
+            load(x.getKey(), new LocalPathResource(x.getValue()));
         }
     }
 
