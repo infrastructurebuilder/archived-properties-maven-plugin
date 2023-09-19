@@ -29,10 +29,11 @@
 
   <groupId>org.infrastructurebuilder.maven</groupId>
   <artifactId>properties-maven-plugin</artifactId>
-  <version>1.2.0.1-ib-SNAPSHOT</version>
+  <version>1.2.1.0-ib-SNAPSHOT</version>
   <name>Infrastructurebuilder Properties Maven Plugin</name>
   <description>The Properties Maven Plugin is here to make life a little easier when dealing
     with properties. It provides goals to read and write properties from files.
+
 
     This was forked from the original properties-maven-plugin to fix issue mojohaus/properties-maven-plugin#30.</description>
 
@@ -65,6 +66,11 @@
       <name>Tim Gordon</name>
       <email>timothygordon32@gmail.com</email>
     </developer>
+    <developer>
+      <id>mykelalvis</id>
+      <name>Mykel Alvis</name>
+      <email>mykel.alvis@gmail.com</email>
+    </developer>
   </developers>
 
   <scm>
@@ -94,6 +100,9 @@
 
   <properties>
     <mavenVersion>3.5.4</mavenVersion>
+    <recommendedJavaBuildVersion>11</recommendedJavaBuildVersion>
+    <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
+    <project.build.outputTimestamp>2023-07-27T21:53:50Z</project.build.outputTimestamp>
     <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
     <gpg.signing.profiles>release,IBgpgsigning</gpg.signing.profiles>
     <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
@@ -101,9 +110,6 @@
     <maven.nexus.staging.plugin.version>1.6.8</maven.nexus.staging.plugin.version>
     <maven.release.plugin.version>3.0.0-M4</maven.release.plugin.version>
     <maven.nexus.staging.plugin.skipStaging>false</maven.nexus.staging.plugin.skipStaging>
-    <recommendedJavaBuildVersion>11</recommendedJavaBuildVersion>
-    <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
-    <project.build.outputTimestamp>2023-07-27T21:53:50Z</project.build.outputTimestamp>
   </properties>
 
   <dependencies>
@@ -127,11 +133,6 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-sec-dispatcher</artifactId>
-      <version>2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>4.0.0</version>
     </dependency>
@@ -147,24 +148,29 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-sec-dispatcher</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20210307</version>
+      <version>20230618</version>
     </dependency>
     <dependency>
       <groupId>com.github.wnameless.json</groupId>
       <artifactId>json-flattener</artifactId>
-      <version>0.12.0</version>
+      <version>0.16.6</version>
     </dependency>
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk</artifactId>
-      <version>1.12.17</version>
+      <version>1.12.553</version>
     </dependency>
     <dependency>
       <groupId>org.tomlj</groupId>
       <artifactId>tomlj</artifactId>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
     </dependency>
 
   </dependencies>
@@ -199,20 +205,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>mojo-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
   <profiles>
     <profile>
@@ -246,7 +238,6 @@
                   <goal>integration-test</goal>
                   <goal>verify</goal>
                 </goals>
-                <phase>integration-test</phase>
               </execution>
             </executions>
           </plugin>
