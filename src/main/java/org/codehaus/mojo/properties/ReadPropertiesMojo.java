@@ -334,7 +334,7 @@ public class ReadPropertiesMojo extends AbstractMojo {
     private static class FileResource extends Resource {
         private final File file;
 
-         FileResource(File file) {
+        FileResource(File file) {
             this.file = file;
         }
 
@@ -362,7 +362,7 @@ public class ReadPropertiesMojo extends AbstractMojo {
 
         private String classpathUrl;
 
-         UrlResource(String url) throws MojoExecutionException {
+        UrlResource(String url) throws MojoExecutionException {
             if (url.startsWith(CLASSPATH_PREFIX)) {
                 String resource = url.substring(CLASSPATH_PREFIX.length());
                 if (resource.startsWith(SLASH_PREFIX)) {

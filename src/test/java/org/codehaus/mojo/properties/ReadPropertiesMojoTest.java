@@ -26,21 +26,21 @@ import static org.junit.Assert.assertThrows;
 public class ReadPropertiesMojoTest {
     private static final String NEW_LINE = System.getProperty("line.separator");
 
-    private  Map<String, String> represent;
+    private Map<String, String> represent;
 
-    private  Map<String, String> notRepresent;
+    private Map<String, String> notRepresent;
     private MavenProject projectStub;
     private ReadPropertiesMojo readPropertiesMojo;
 
     @Before
     public void setUp() {
-      represent = new HashMap<>();
-      notRepresent = new HashMap<>();
-      represent.put("test.property1", "value1®");
-      represent.put("test.property2", "value2");
+        represent = new HashMap<>();
+        notRepresent = new HashMap<>();
+        represent.put("test.property1", "value1®");
+        represent.put("test.property2", "value2");
 
-      notRepresent.put("test.property3", "value3™");
-      notRepresent.put("test.property4", "κόσμε");
+        notRepresent.put("test.property3", "value3™");
+        notRepresent.put("test.property4", "κόσμε");
         projectStub = new MavenProject();
         readPropertiesMojo = new ReadPropertiesMojo();
         readPropertiesMojo.setProject(projectStub);
@@ -131,8 +131,7 @@ public class ReadPropertiesMojoTest {
 
             // strings which are representable in ISO-8859-1 should match the source data
             for (String sourceKey : represent.keySet()) {
-                assertEquals(
-                        represent.get(sourceKey), projectProperties.getProperty(keyPrefix + sourceKey));
+                assertEquals(represent.get(sourceKey), projectProperties.getProperty(keyPrefix + sourceKey));
             }
 
             // strings which are not representable in ISO-8859-1 underwent a conversion
@@ -309,8 +308,7 @@ public class ReadPropertiesMojoTest {
 
     @Test
     public void testInvalidEncoding() throws Exception {
-        readPropertiesMojo.setFiles(
-                new File[] {getPropertyFileForTesting(StandardCharsets.UTF_8.name(), represent)});
+        readPropertiesMojo.setFiles(new File[] {getPropertyFileForTesting(StandardCharsets.UTF_8.name(), represent)});
         readPropertiesMojo.setEncoding("invalid-encoding");
         MojoExecutionException thrown = assertThrows(MojoExecutionException.class, () -> readPropertiesMojo.execute());
         assertEquals(thrown.getMessage(), "Invalid encoding 'invalid-encoding'");

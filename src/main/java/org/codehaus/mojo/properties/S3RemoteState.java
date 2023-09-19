@@ -117,7 +117,7 @@ public class S3RemoteState {
             s3b = s3b.withCredentials(new AWSStaticCredentialsProvider(credentials));
         }
         if (region != null) {
-          s3b = s3b.withRegion(region);
+            s3b = s3b.withRegion(region);
         }
         AmazonS3 client = s3b.build();
 

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
-import java.util.StringJoiner;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -124,7 +123,7 @@ public class InjectServersAsPropertiesMojo extends AbstractMojo {
             getLog().info("Using all servers");
             s = new ArrayList<>();
             for (Server ss : settings.getServers()) {
-              s.add(ss.getId());
+                s.add(ss.getId());
             }
         }
         for (int i = 0; i < s.size(); ++i) {
@@ -191,9 +190,9 @@ public class InjectServersAsPropertiesMojo extends AbstractMojo {
                                 pkLines.stream().collect(joining("\n")));
                     } catch (IOException e) {
                         if (quiet) {
-                          getLog().info("Quietly ignoring read error of " + pk);
+                            getLog().info("Quietly ignoring read error of " + pk);
                         } else {
-                          throw new MojoExecutionException("Error reading " + pk, e);
+                            throw new MojoExecutionException("Error reading " + pk, e);
                         }
                     }
                 }
@@ -213,7 +212,7 @@ public class InjectServersAsPropertiesMojo extends AbstractMojo {
 
     private void setProperty(Properties p, String key, String val) throws SecDispatcherException {
         if (val != null) {
-          p.setProperty(key, secDispatcher.decrypt(val));
+            p.setProperty(key, secDispatcher.decrypt(val));
         }
     }
 
@@ -349,7 +348,7 @@ public class InjectServersAsPropertiesMojo extends AbstractMojo {
     private static class FileResource extends Resource {
         private final File file;
 
-         FileResource(File file) {
+        FileResource(File file) {
             this.file = file;
         }
 
@@ -377,7 +376,7 @@ public class InjectServersAsPropertiesMojo extends AbstractMojo {
 
         private String classpathUrl;
 
-         UrlResource(String url) throws MojoExecutionException {
+        UrlResource(String url) throws MojoExecutionException {
             if (url.startsWith(CLASSPATH_PREFIX)) {
                 String resource = url.substring(CLASSPATH_PREFIX.length(), url.length());
                 if (resource.startsWith(SLASH_PREFIX)) {

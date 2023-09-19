@@ -92,15 +92,15 @@ public abstract class AbstractWritePropertiesMojo extends AbstractMojo {
      * @throws MojoExecutionException {@link MojoExecutionException}
      */
     protected void writeProperties(Properties properties, File file) throws MojoExecutionException {
-      try {
-          storeWithoutTimestamp(properties, file, "Properties");
-      } catch (FileNotFoundException e) {
-          getLog().error("Could not create FileOutputStream: " + file);
-          throw new MojoExecutionException(e.getMessage(), e);
-      } catch (IOException e) {
-          getLog().error("Error writing properties: " + file);
-          throw new MojoExecutionException(e.getMessage(), e);
-      }
+        try {
+            storeWithoutTimestamp(properties, file, "Properties");
+        } catch (FileNotFoundException e) {
+            getLog().error("Could not create FileOutputStream: " + file);
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (IOException e) {
+            getLog().error("Error writing properties: " + file);
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
     }
 
     // https://github.com/apache/maven-archiver/blob/master/src/main/java/org/apache/maven/archiver/PomPropertiesUtil.java#L81
