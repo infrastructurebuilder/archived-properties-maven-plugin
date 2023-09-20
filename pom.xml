@@ -30,7 +30,7 @@
   <groupId>org.infrastructurebuilder.maven</groupId>
 
   <artifactId>properties-maven-plugin</artifactId>
-  <version>1.2.1.0-ib</version>
+  <version>1.2.1.1-ib-SNAPSHOT</version>
 
   <packaging>maven-plugin</packaging>
 
@@ -84,7 +84,7 @@
   <scm>
     <connection>scm:git:https://github.com/infrastructurebuilder/properties-maven-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/infrastructurebuilder/properties-maven-plugin.git</developerConnection>
-    <tag>1.2.1.0-ib</tag>
+    <tag>HEAD</tag>
     <url>https://github.com/infrastructurebuilder/properties-maven-plugin</url>
   </scm>
   <issueManagement>
@@ -110,7 +110,7 @@
     <mavenVersion>3.5.4</mavenVersion>
     <recommendedJavaBuildVersion>11</recommendedJavaBuildVersion>
     <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
-    <project.build.outputTimestamp>2023-09-20T11:45:26Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2023-09-20T11:46:06Z</project.build.outputTimestamp>
     <scmpublish.content>target/staging/${project.artifactId}</scmpublish.content>
     <gpg.signing.profiles>run-its,mojorelease,release,IBgpgsigning</gpg.signing.profiles>
     <maven.release.plugin.version>3.0.1</maven.release.plugin.version>
